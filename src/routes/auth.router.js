@@ -1,8 +1,10 @@
 import express from "express";
 import { isAdmin, isUser } from "../middlewares/auth.js";
 import { AuthController } from '../controllers/auth.controller.js';
+const authController = new AuthController();
 import passport from 'passport';
-const authController = new AuthController()
+
+
 export const authRouter = express.Router();
 
 authRouter.get('/session', authController.renderSessionView);
@@ -22,3 +24,6 @@ authRouter.get('/recoverPassword', authController.recoverPassword);
 authRouter.post('/checkEmail', authController.checkEmail);
 authRouter.get('/resetPassword', authController.resetPassword);
 authRouter.post('/resetPassword', authController.resetPasswordComplete);
+authRouter.get('/', authController.getAllUsers);
+authRouter.delete('/', authController.deleteInactiveUsers);
+authRouter.get('/roleManager', authController.roleManager);

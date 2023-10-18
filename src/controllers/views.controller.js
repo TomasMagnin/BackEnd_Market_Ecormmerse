@@ -82,4 +82,4 @@ export class ViewsController {
 
         res.status(200).json({ message: 'Logs tested successfully' });
     }
-}
+};

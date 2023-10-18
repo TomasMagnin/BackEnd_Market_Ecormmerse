@@ -1,6 +1,6 @@
-import { CodesModel } from '../DAO/mongo/models/codes.model.js';
-import { UserModel } from '../DAO/mongo/models/users.model.js';
-import {v4 as uuidv4 } from 'uuid';
+import { CodesModel } from "../DAO/mongo/models/codes.model.js";
+import { UserModel } from "../DAO/mongo/models/users.model.js";
+import {v4 as uuidv4 } from "uuid";
 import { transport } from "../utils/mailer.js";
 import dotenv from "dotenv";
 dotenv.config();

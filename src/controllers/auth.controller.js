@@ -3,9 +3,12 @@ import { CustomError } from "../services/errors/custom-error.js";
 import passport  from "passport";
 import EErros from "../services/errors/enums.js";
 import logger from "../utils/logger.js";
-import {CodeService} from "../services/code.service.js";
-import { createHash } from '../utils/utils.js';
+import { CodeService } from "../services/code.service.js";
+import { createHash } from "../utils/utils.js";
 const codeService = new CodeService();
+import { AuthService } from "../services/auth.service.js";
+const authService = new AuthService();
+//import upload from "../middlewares/multer.js";
 
 export class AuthController {
 
@@ -184,32 +187,32 @@ export class AuthController {
        }
     };
 
- async renderAdministrationView(req, res) {
-    try {
-        const user = req.session.user;
-        return res.render('admin',{user});
-    } catch (error) {
-        logger.error(error);
-        return res.status(500).json({
-            status: 'error',
-            msg: 'something went wrong :(',
-            data: {},
-        });
-    }
- };
+    async renderAdministrationView(req, res) {
+       try {
+           const user = req.session.user;
+           return res.render('admin',{user});
+       } catch (error) {
+           logger.error(error);
+           return res.status(500).json({
+               status: 'error',
+               msg: 'something went wrong :(',
+               data: {},
+           });
+       }
+    };
 
-async renderGitHubLogin(req, res) {
-    try {
-        return passport.authenticate('github', { scope: ['user:email'] })(req, res);
-    } catch (error) {
-        logger.error(error);
-        return res.status(500).json({
-            status: 'error',
-            msg: 'something went wrong :(',
-            data: {},
-        });
-    }
- };
+    async renderGitHubLogin(req, res) {
+        try {
+            return passport.authenticate('github', { scope: ['user:email'] })(req, res);
+        } catch (error) {
+            logger.error(error);
+            return res.status(500).json({
+                status: 'error',
+                msg: 'something went wrong :(',
+                data: {},
+            });
+        }
+     };
 
     async handleGitHubCallback(req, res, next) {
        try {
@@ -284,18 +287,17 @@ async renderGitHubLogin(req, res) {
         }
     };
 
-    async uploadDocuments(req, res) {
+    async  uploadDocuments(req, res) {
         try {
             const { uid } = req.params;
             const { files } = req;
-            
             const user = await UserModel.findById(uid);
+
             if (!user) {
                 return res.status(404).json({ message: 'User not found.' });
             }
-        
+
             const documents = [];
-        
             for (const file of files) {
                 documents.push({
                     name: file.originalname,
@@ -303,11 +305,10 @@ async renderGitHubLogin(req, res) {
                     status: 'uploaded'
                 });
             }
-        
+
             user.documents = documents;
             await user.save();
             return res.status(200).json({ message: 'Documents uploaded successfully.' });
-    
         } catch (error) {
             logger.error(error);
             return res.status(500).json({
@@ -316,8 +317,6 @@ async renderGitHubLogin(req, res) {
                 data: {},
             });
         }
+    };    
 
-    };
 };
-
-

@@ -14,8 +14,6 @@ const clientID = process.env.CLIENT_ID
 const clientSecret = process.env.CLIENT_SECRET
 
 
-
-
 export function iniPassport() {
   passport.use(
     'login',
@@ -30,7 +28,6 @@ export function iniPassport() {
           logger.debug('Invalid Password');
           return done(null, false);
         }
-
         return done(null, user);
       } catch (err) {
         return done(err);

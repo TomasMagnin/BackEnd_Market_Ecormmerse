@@ -10,12 +10,16 @@ import { cartsRouter } from "./routes/carts.router.js";           //    Importam
 import { viewsRouter } from "./routes/views.router.js";
 import { chatsRouter } from "./routes/chats.router.js"
 import { authRouter } from "./routes/auth.router.js";
+import { usersRoleRouter } from "./routes/usersRole.router.js";
+
 import { sessionsRouter } from "./routes/sessions.router.js";
 import MongoStore from "connect-mongo";
 import http from "http";
 import passport  from "passport";
 import { iniPassport } from "./config/passport.config.js";
-import  compression   from "express-compression";
+import compression   from "express-compression";
+import swaggerJSDoc from "swagger-jsdoc";
+import swaggerUiExpress from "swagger-ui-express";
 import { errorHandler } from "./middlewares/error.js";
 import logger from "./utils/logger.js";
 import dotenv from "dotenv";
@@ -28,10 +32,11 @@ const app = express();                                              // Asignamos
 const port = process.env.PORT;   
 const httpServer = http.createServer(app);                          // Asignamos el N° de puerto a una varibale. 
 const socketServer = new Server(httpServer);                        // Guardamos nuestro servidor socket en una variable
-app.use(errorHandler);
+
 
 
 // Middleware 
+app.use(errorHandler);
 app.use(express.json());                                        // Declaramos que el servidor utiliza formato JSON por defecto.
 app.use(express.urlencoded({extended: true}));                  // Declaramos que extendemos lo que recive por URL, para recivir datos complejos y porder mapearlos desde la URL.
 app.use(express.static("./public"));                              // Usamos una carpeta public, para guardar archivos estaticos, donde puede acceder el usuario. El nombre del directorio no forma parte de la URL.
@@ -88,7 +93,7 @@ app.use("/", viewsRouter);
 app.use("/chat", chatsRouter);
 app.use("/auth", authRouter);
 app.use("api/sessions", sessionsRouter);
-app.use('/api/users', usersRoleRouter);
+app.use("/api/users", usersRoleRouter);
 
 
 

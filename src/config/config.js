@@ -3,6 +3,5 @@ dotenv.config();
 
 const persistence = process.env.PERSISTENCE;
 
-export {
-    persistence,
-};
+
+export default persistence;

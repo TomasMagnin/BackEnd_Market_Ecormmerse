@@ -9,5 +9,5 @@ export const transport = nodemailer.createTransport({
         user: process.env.GOOGLE_EMAIL,
         pass: process.env.GOOGLE_PASS,
     },
-})
+});
 

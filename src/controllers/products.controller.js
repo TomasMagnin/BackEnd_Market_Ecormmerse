@@ -3,6 +3,9 @@ const productService = new ProductService();
 import { CustomError } from "../services/errors/custom-error.js";
 import EErros from "../services/errors/enums.js";
 import { generateProduct } from "../utils/utils.js";
+import nodemailer from "nodemailer";
+import dotenv from "dotenv";
+dotenv.config();
 
 
 export class ProductsController {
@@ -134,6 +137,9 @@ export class ProductsController {
                 code: EErros.INTERNAL_SERVER_ERROR,
             });
         }
+        if (req.user.role === 'premium') {
+            this.sendProductDeletionEmail(req.user.email, product.name);
+        }
         return res.status(200).json({
             status: 'success',
             msg: 'product deleted',
@@ -142,7 +148,37 @@ export class ProductsController {
         
     }    
         
+    async sendProductDeletionEmail(email, productName) {
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: process.env.GOOGLE_EMAIL,
+                pass: process.env.GOOGLE_PASS,
+            },
+        });
 
+        const mailOptions = {
+            from: process.env.GOOGLE_EMAIL,
+            to: email,
+            subject: 'Your product has been deleted',
+            html: `
+            <p>Hello,</p>
+            <p>Your product "${productName}" has been deleted.</p>
+            <p>If you have any questions or concerns, please contact our support team.</p>
+            <p>Best regards,</p>
+            <p>Your Application Team</p>
+            `,
+        };
+
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                console.log(error);
+            } else {
+                console.log('Product deletion email sent: ' + info.response);
+            }
+        });
+    }
+    
     async mock(req, res) {
             const products = [];
             for (let i = 0; i < 100; i++) {

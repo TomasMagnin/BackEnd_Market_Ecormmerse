@@ -9,6 +9,7 @@ const codeService = new CodeService();
 import { AuthService } from "../services/auth.service.js";
 const authService = new AuthService();
 //import upload from "../middlewares/multer.js";
+import { ROLES } from "../utils/constants.js";
 
 export class AuthController {
 
@@ -54,7 +55,7 @@ export class AuthController {
                 await user.save();
             }
            req.session.user = { _id: req.user._id, email: req.user.email, firstName: req.user.firstName, lastName: req.user.lastName, age: req.user.age, role: req.user.role };
-           return res.redirect('/api/products');
+           return res.redirect("/");
        } catch (error) {
            logger.error(error);
            return res.status(500).json({
@@ -80,7 +81,11 @@ export class AuthController {
 
     async renderRegisterView(req, res) {
        try {
-           return res.render("register", {});
+        if(req.session.user) {
+            res.redirect('/');
+            return
+        }
+        return res.render("register", {});
        } catch (error) {
            logger.error(error);
            return res.status(500).json({
@@ -153,11 +158,11 @@ export class AuthController {
     async renderProfileView(req, res) {
        try {
            const user = { email: req.session.email, role: req.session.role };
-               return res.render('profile', { user: user });
+               return res.render("profile", { user: user });
        } catch (error) {
            logger.error(error);
            return res.status(500).json({
-               status: 'error',
+               status: "error",
                msg: 'something went wrong :(',
                data: {},
            });
@@ -173,15 +178,15 @@ export class AuthController {
             };
             req.session.destroy((err) => {
                 if (err) {
-                    return res.status(500).render('error', { error: 'session couldnt be closed' });
+                    return res.status(500).render("error", { error: "session couldnt be closed" });
                 }
-                return res.redirect('/auth/login')
+                return res.redirect("/auth/login")
             });
        } catch (error) {
            logger.error(error);
            return res.status(500).json({
-               status: 'error',
-               msg: 'something went wrong :(',
+               status: "error",
+               msg: "something went wrong",
                data: {},
            });
        }
@@ -194,8 +199,8 @@ export class AuthController {
        } catch (error) {
            logger.error(error);
            return res.status(500).json({
-               status: 'error',
-               msg: 'something went wrong :(',
+               status: "error",
+               msg: "something went wrong",
                data: {},
            });
        }
@@ -265,7 +270,7 @@ export class AuthController {
             logger.error(error);
             return res.status(500).json({
                 status: 'error',
-                msg: 'something went wrong :(',
+                msg: 'something went wrong',
                 data: {},
             });
         }
@@ -276,7 +281,7 @@ export class AuthController {
             const { password, email } = req.body;
             const passwordHash = createHash(password)
             const updatedUser = await codeService.updateUser(email, passwordHash);
-    res.redirect('/auth/login')
+    res.redirect("/auth/login")
         } catch (error) {
             logger.error(error);
             return res.status(500).json({
@@ -291,32 +296,64 @@ export class AuthController {
         try {
             const { uid } = req.params;
             const { files } = req;
-            const user = await UserModel.findById(uid);
-
-            if (!user) {
-                return res.status(404).json({ message: 'User not found.' });
-            }
-
-            const documents = [];
-            for (const file of files) {
-                documents.push({
-                    name: file.originalname,
-                    reference: `/uploads/${file.filename}`,
-                    status: 'uploaded'
-                });
-            }
-
-            user.documents = documents;
-            await user.save();
-            return res.status(200).json({ message: 'Documents uploaded successfully.' });
+            const response = await authService.uploadDocuments(uid, files);
+            return res.status(response.status).json({ message: response.message });
+       
         } catch (error) {
             logger.error(error);
             return res.status(500).json({
                 status: 'error',
-                msg: 'something went wrong :(',
+                msg: 'something went wrong',
                 data: {},
             });
         }
-    };    
+    };
+    
+    async getAllUsers(req, res) {
+        try {
+            const users = await UserModel.find({}, 'name email role');
+            res.status(200).json({ users });
+        } catch (error) {
+            CustomError.createError({
+                name: 'Controller message error',
+                cause: 'there was an error in one of the methods',
+                message: 'something went wrong :(',
+                code: EErros.INTERNAL_SERVER_ERROR,
+            });
+        }
+    };
+
+    async deleteInactiveUsers(req, res) {
+        try {
+            const result = await authService.deleteInactiveUsers();
+            res.status(200).json({ message: 'Inactive users deleted and notifications sent.', result });
+        } catch (error) {
+            logger.error(error);
+            return res.status(500).json({
+                status: 'error',
+                msg: 'something went wrong',
+                data: {},
+            });
+        }
+    };
+
+    async roleManager(req, res) {
+        try {
+            const user = req.session.user;
+            if(user.role !== ROLES.ADMIN) {
+                res.render('permissionDenied')
+                return
+        }
+            const users = await UserModel.find({}, 'name email role').lean();
+            res.render('roleManager', { users });
+        } catch (error) {
+            logger.error(error);
+            return res.status(500).json({
+                status: 'error',
+                msg: 'something went wrong',
+                data: {},
+            });
+        }
+    };
 
 };

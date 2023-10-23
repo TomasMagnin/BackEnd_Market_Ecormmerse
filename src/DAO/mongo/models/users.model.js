@@ -1,6 +1,6 @@
 import { Schema, model } from "mongoose";
 import mongoosePaginate  from "mongoose-paginate-v2";       // Importamos el modulo de paginacion.
-
+ import { ROLES } from "../../../utils/constants.js";
 
 const schema = new Schema({
     firstName: {type: String, required: true, max: 100},
@@ -9,7 +9,7 @@ const schema = new Schema({
     age: {type: Number, required: false},
     password: {type: String, max: 100},
     cartID: {type: String, required: false},
-    role: {type: String, enum: ['user', 'admin', 'premium'], required: true, default: "user"},
+    role: {type: String, enum: [ROLES.USER, ROLES.ADMIN, ROLES.PREMIUM], required: true, default: ROLES.USER},
     documents: [{ name: String, reference: String, status: String }],
     last_connection: {type: Date},
     },

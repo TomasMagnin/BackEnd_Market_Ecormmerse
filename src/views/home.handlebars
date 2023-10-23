@@ -20,16 +20,12 @@
         {{#each products}}
         <li id={{this.id}}>
             <div>
-                <p>{{this.title}}
-                -
-                {{this.description}}
-                - ${{this.price}}
-                -
-                {{this.thumbnail}}
-                -
-                {{this.code}}
-                -
-                {{this.stock}}</p>
+                <h2>{{this.title}}</h2>
+                <p>{{this.description}}</p>
+                <p>${{this.price}}</p>
+                <img src="{{this.thumbnail}}" alt="Imagen de {{this.title}}">
+                <p>{{this.code}}</p>
+                <p>{{this.stock}}</p>
             <button onclick="deleteProduct('{{this.id}}')">Delete</button>
         </div>
         </li>

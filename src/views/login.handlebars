@@ -1,13 +1,33 @@
 <h1>LOGIN</h1>
-<form action="/auth/login" method="POST">
-    <input type="text" name="email" placeholder="email">
-    <input type="text" name="password" placeholder="password">
+<form id="loginform">
+    <input type="text" name="email" placeholder="email" id="email">
+    <input type="text" name="password" placeholder="password" id="password">
     <input type="submit" value="login">
 </form>
 <a href="/auth/register">Don't have an account? Sign Up</a>
+<a href="/auth/recoverPassword">Forgot your password?</a>
 <script>
     function redirectToGithub() {
-        window.location.href = "/api/sessions/login/github";
+        window.location.href = "/auth/login/github";
     }
+    const loginform = document.getElementById('loginform');
+    loginform.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const loginParams = {
+            email: document.getElementById('email').value,
+            password: document.getElementById('password').value,
+        }
+        const response = await fetch('/auth/login', {
+            method: 'POST',
+            body: JSON.stringify(loginParams),
+            headers: {
+                'content-type': 'application/json'
+            }
+        })
+        if(response.redirected) {
+            window.location.assign('/');
+        }
+        console.error(await response.json)
+    });
 </script>
 <button onclick="redirectToGithub()">Entrar con GitHub</button>

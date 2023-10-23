@@ -1,6 +1,7 @@
 import { UserModel } from "../DAO/mongo/models/users.model.js"
 import { CustomError } from "../services/errors/custom-error.js";
 import EErros from "../services/errors/enums.js";
+import { ROLES } from "../utils/constants.js";
 
 
 
@@ -31,8 +32,7 @@ export class UsersController {
                 cause: { missingDocuments }
             });
         }
-
-        user.role = user.role === 'user' ? 'premium' : 'user';
+        user.role = user.role === ROLES.USER ? ROLES.PREMIUM : ROLES.USER;
         await user.save();
 
         return res.status(200).json({ message: 'User role updated successfully', user });

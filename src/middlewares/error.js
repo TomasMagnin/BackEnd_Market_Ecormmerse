@@ -8,7 +8,7 @@ export function errorHandler (error, req, res, next) {
         case EErros.INTERNAL_SERVER_ERROR:
             res.status(500).send({ status: "error", error: error.name, cause: error.cause });
             break;
-
+            
         case EErros.VALIDATION_ERROR:
             res.status(400).send({ status: "error", error: error.name, cause: error.cause });
             break;
@@ -16,7 +16,6 @@ export function errorHandler (error, req, res, next) {
         case EErros.NOT_FOUND_ERROR:
             res.status(404).send({ status: "error", error: error.name, cause: error.cause });
             break;
-
         default:
             res.send({ status: "error", error: "Unhandled error" });
         break;

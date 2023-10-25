@@ -9,7 +9,7 @@ export function isUser(req, res, next) {
 };
 
 export function isAdmin(req, res, next) {
-    if (req.session.user && req.session.user.role === ROLES.ADMIN) {
+    if (req.session.user && req.session.user.role === ROLES.ADMIN) {   
         return next();
     } else {
         return res.status(403).json({ error: 'Access denied. Only admins are allowed.' });

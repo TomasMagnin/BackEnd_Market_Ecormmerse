@@ -6,17 +6,20 @@ const storage = multer.diskStorage({
         let uploadFolder = '';
 
         if (file.fieldname === 'profileImage') {
-            uploadFolder = path.join(__dirname, '../uploads/profile');
+            uploadFolder = path.join(__dirname, '../public/uploads/profile');
         } else if (file.fieldname === 'productImage') {
-            uploadFolder = path.join(__dirname, '../uploads/product');
+            uploadFolder = path.join(__dirname, '../public/uploads/product');
         } else {
-            uploadFolder = 'uploads/documents/';
+            uploadFolder = path.join(__dirname, '../public/uploads/documents');
         }
 
         cb(null, uploadFolder);
     },
     filename: function (req, file, cb) {
-        cb(null, file.originalname);
+        const splitted = file.originalname.split('.')
+        const extension = splitted[splitted.length - 1];
+        const user = req.user
+        cb(null, `${String(user._id)}-${file.fieldname}.${extension}`);
     }
 });
 

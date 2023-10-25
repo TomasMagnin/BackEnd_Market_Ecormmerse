@@ -8,7 +8,6 @@ import { createHash } from "../utils/utils.js";
 const codeService = new CodeService();
 import { AuthService } from "../services/auth.service.js";
 const authService = new AuthService();
-//import upload from "../middlewares/multer.js";
 import { ROLES } from "../utils/constants.js";
 
 export class AuthController {
@@ -42,7 +41,7 @@ export class AuthController {
     async handleLogin(req, res) {
        try {
            if (!req.user) {
-                throw CustomError.createError({
+                CustomError.createError({
                    name: 'fields missing or incorrect',
                    cause: 'there was an error in one of the methods',
                    message: 'validation error: please complete or correct all fields.',
@@ -98,17 +97,17 @@ export class AuthController {
 
     async handleRegister(req, res) {
        try {
-           if (!req.user) {
-               CustomError.createError({
-                   name: 'Controller message error',
-                   cause: 'there was an error in one of the methods',
-                   message: 'something went wrong :(',
-                   code: EErros.INTERNAL_SERVER_ERROR,
-               });
-           }
-           req.session.user = { _id: req.user._id, email: req.user.email, firstName: req.user.firstName, lastName: req.user.lastName, age: req.user.age, role: req.user.role };
-           return res.redirect('/auth/login');
-       } catch (error) {
+            if (!req.user) {
+                CustomError.createError({
+                    name: 'Controller message error',
+                    cause: 'there was an error in one of the methods',
+                    message: 'something went wrong :(',
+                    code: EErros.INTERNAL_SERVER_ERROR,
+                });
+            }
+            req.session.user = { _id: req.user._id, email: req.user.email, firstName: req.user.firstName, lastName: req.user.lastName, age: req.user.age, isAdmin: req.user.isAdmin };
+            return res.json({ msg: 'ok', payload: req.user });
+        } catch (error) {
            logger.error(error);
            return res.status(500).json({
                status: 'error',
@@ -157,8 +156,8 @@ export class AuthController {
 
     async renderProfileView(req, res) {
        try {
-           const user = { email: req.session.email, role: req.session.role };
-               return res.render("profile", { user: user });
+            const user = { email: req.session.user.email, isAdmin: req.session.user.role === ROLES.ADMIN ? 'SI': 'NO', _id: String(req.session.user._id) };
+            return res.render("profile", { user: user });
        } catch (error) {
            logger.error(error);
            return res.status(500).json({
@@ -170,43 +169,30 @@ export class AuthController {
     };
 
     async handleLogout(req, res) {
-       try { 
+        try { 
             const user = await UserModel.findById(req.session.user._id);
             if (user) {
                 user.last_connection = new Date();
                 await user.save();
             };
+    
             req.session.destroy((err) => {
                 if (err) {
-                    return res.status(500).render("error", { error: "session couldnt be closed" });
+                    return res.status(500).render('error', { error: 'session couldnt be closed' });
                 }
-                return res.redirect("/auth/login")
-            });
-       } catch (error) {
+                return res.redirect('/auth/login');
+        });
+        } catch (error) {
            logger.error(error);
            return res.status(500).json({
                status: "error",
                msg: "something went wrong",
                data: {},
            });
-       }
+        }
     };
 
-    async renderAdministrationView(req, res) {
-       try {
-           const user = req.session.user;
-           return res.render('admin',{user});
-       } catch (error) {
-           logger.error(error);
-           return res.status(500).json({
-               status: "error",
-               msg: "something went wrong",
-               data: {},
-           });
-       }
-    };
-
-    async renderGitHubLogin(req, res) {
+    renderGitHubLogin(req, res) {
         try {
             return passport.authenticate('github', { scope: ['user:email'] })(req, res);
         } catch (error) {
@@ -219,15 +205,15 @@ export class AuthController {
         }
      };
 
-    async handleGitHubCallback(req, res, next) {
+    handleGitHubCallback(req, res, next) {
        try {
-           passport.authenticate('github', { failureRedirect: '/login' })(req, res, (err) => {
-               if (err) {
-                   logger.error('Error in auth GitHub callback:', err);
-                   return res.status(500).json({ error: 'Internal server error' });
-               }
-               return res.redirect('/');
-           });
+            passport.authenticate('github', { failureRedirect: '/login' })(req, res, (err) => {
+                if (err) {
+                    logger.error('Error in auth GitHub callback:', err);
+                    return res.status(500).json({ error: 'Internal server error' });
+                }
+                return res.redirect('/');
+            });
        } catch (error) {
            logger.error(error);
            return res.status(500).json({
@@ -281,7 +267,7 @@ export class AuthController {
             const { password, email } = req.body;
             const passwordHash = createHash(password)
             const updatedUser = await codeService.updateUser(email, passwordHash);
-    res.redirect("/auth/login")
+            res.redirect("/auth/login")
         } catch (error) {
             logger.error(error);
             return res.status(500).json({
@@ -297,7 +283,7 @@ export class AuthController {
             const { uid } = req.params;
             const { files } = req;
             const response = await authService.uploadDocuments(uid, files);
-            return res.status(response.status).json({ message: response.message });
+            return res.status(200).json({ message: "ok"});
        
         } catch (error) {
             logger.error(error);
@@ -344,8 +330,9 @@ export class AuthController {
                 res.render('permissionDenied')
                 return
         }
-            const users = await UserModel.find({}, 'name email role').lean();
-            res.render('roleManager', { users });
+        let users = await UserModel.find({}, 'name email role').lean();
+        users = users.filter(user => user.role !== ROLES.ADMIN)
+        res.render('roleManager', { users });
         } catch (error) {
             logger.error(error);
             return res.status(500).json({

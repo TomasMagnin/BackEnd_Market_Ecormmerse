@@ -2,9 +2,9 @@ import { UserDTO } from "../DAO/DTO/user.dto.js";
 
 export  class  SessionsController {
 
-    async renderSessionView(req, res) {
+    renderSessionView(req, res) {
        try {
-           return res.send(JSON.stringify(req.session));    
+            return res.send(JSON.stringify(req.session.user));   
        } catch (error) {
            logger.error(error);
            return res.status(500).json({
@@ -15,9 +15,9 @@ export  class  SessionsController {
        }
     };
 
-    async getCurrentUser(req, res) {
+    getCurrentUser(req, res) {
         try {
-            const user = new UserDTO(req.session);
+            const user = new UserDTO(req.session.user);
             return res.status(200).json({ user });
         } catch (error) {
             logger.error(error);
@@ -29,7 +29,7 @@ export  class  SessionsController {
         }  
     };
 
-}
+};
 
 
 

@@ -13,7 +13,5 @@ const schema = new Schema({
     owner: { type: String, required: true, default: 'admin' },
 });
      
-schema.plugin(mongoosePaginate);                            // Llamamos el plugin de paginate, para usar la paginacion en el eschema. Este Plugin se lo podemos inyectar a cada schema que queramos.
-
-                                                            // Basicamente le decimos que la tabla de products tiene que tener el esquema anterior creado por el constructor "schema"
-export const ProductModel = model("products", schema);          // userModel es ka variable para exportar, "user " seria el nombre de la COLECCTION en la base de datos en Mongo.
+schema.plugin(mongoosePaginate);                                                                                      
+export const ProductModel = model("products", schema);          

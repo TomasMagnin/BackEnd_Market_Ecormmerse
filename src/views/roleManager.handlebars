@@ -4,12 +4,25 @@
     <title>User Management</title>
 </head>
 <body>
+    <nav>
+    <ul>
+        <li>
+            <a href="/">Home</a>
+        </li>
+        <li>
+            <a href="/auth/profile">Profile</a>
+        </li>
+        <li>
+            <a href="/auth/roleManager">User Administration</a>
+        </li>
+    </ul>
+    </nav>
     <h1>User Management</h1>
     <ul>
     {{#each users}}
         <li>
             {{firstName}} - {{email}} - {{role}}
-            <button onclick="changeRole('{{_id}}', 'premium')">Change to Premium</button>
+            <button onclick="changeRole('{{_id}}')">Change to Premium</button>
             <button onclick="deleteUser('{{_id}}')">Delete</button>
         </li>
     {{/each}}
@@ -18,28 +31,27 @@
     <script>
     async function changeRole(userId, newRole) {
         try {
-            const response = await fetch(`/api/users/${userId}/role`, {
+            const response = await fetch(`/api/users/premium/${userId}`, {
                 method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    newRole
-                })
             });
+
             const data = await response.json();
             console.log('User role changed:', data);
         } catch (error) {
             console.error('Error changing user role:', error);
         }
     }
+
     async function deleteUser(userId) {
         try {
             const response = await fetch(`/api/users/${userId}`, {
                 method: 'DELETE'
             });
-            const data = await response.json();
-            console.log('User deleted:', data);
+
+            if(response.ok) {
+                alert('user deleted')
+                window.location.assign(window.location.href)
+            }
         } catch (error) {
             console.error('Error deleting user:', error);
         }

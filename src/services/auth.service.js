@@ -1,5 +1,8 @@
 import { UserModel } from "../DAO/mongo/models/users.model.js";
 import { transport } from "../utils/mailer.js";
+import { DOCUMENT_TYPE } from "../utils/constants.js";
+import path from "path";
+
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -14,13 +17,24 @@ export class AuthService {
 
             const documents = [];
 
-            for (const file of files) {
-                documents.push({
-                    name: file.originalname,
-                    reference: `/uploads/${file.filename}`,
-                    status: 'uploaded'
+            Object.entries(files).forEach(([key, value]) => {
+                let name = '';
+                if(key === 'identification') {
+                    name = DOCUMENT_TYPE.IDENTIFICATION
+                } else if(key === 'stateaccount') {
+                    name = DOCUMENT_TYPE.STATE_ACCOUNT
+                } else if (key === 'address') {
+                    name = DOCUMENT_TYPE.ADDRESS
+                }
+
+                const { base } = path.parse(value[0].path);
+                const reference = `/uploads/documents/${base}`
+
+                documents.push({ 
+                    name, reference
                 });
-            }
+            });
+                
 
             user.documents = documents;
             await user.save();

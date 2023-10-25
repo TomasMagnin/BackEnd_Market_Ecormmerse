@@ -20,17 +20,17 @@ formRegister.addEventListener("submit", async (e) => {
         password: document.getElementById("password").value,
         age: document.getElementById("age").value
     }
-    const response = await fetch('/auth/register', {
+    const response = await fetch("/auth/register", {
         method: 'POST',
         body: JSON.stringify(userParams),
         headers: {
-            'content-type': 'application/json'
+            "content-type": "application/json"
         }
     })
     if(response.ok) {
-        window.location.assign('/auth/login')
+        window.location.assign("/auth/login")
     } else{
-        alert('Error al registrar usuario')
+        alert("Error al registrar usuario")
     }
 })
 </script>

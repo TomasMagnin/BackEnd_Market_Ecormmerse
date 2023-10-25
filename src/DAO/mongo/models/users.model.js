@@ -1,5 +1,5 @@
 import { Schema, model } from "mongoose";
-import mongoosePaginate  from "mongoose-paginate-v2";       // Importamos el modulo de paginacion.
+import mongoosePaginate  from "mongoose-paginate-v2";       
  import { ROLES } from "../../../utils/constants.js";
 
 const schema = new Schema({
@@ -10,12 +10,11 @@ const schema = new Schema({
     password: {type: String, max: 100},
     cartID: {type: String, required: false},
     role: {type: String, enum: [ROLES.USER, ROLES.ADMIN, ROLES.PREMIUM], required: true, default: ROLES.USER},
-    documents: [{ name: String, reference: String, status: String }],
+    documents: [{ name: String, reference: String }],
     last_connection: {type: Date},
     },
     {versionKey: false}
 );
 
-schema.plugin(mongoosePaginate);                          // Llamamos el plugin de paginate, para usar la paginacion en el eschema. Este Plugin se lo podemos inyectar a cada schema que queramos.
-                                                          // Basicamente le decimos que la tabla de products tiene que tener el esquema anterior creado por el constructor "schema"
-export const UserModel = model("users", schema);          // userModel es ka variable para exportar, "user " seria el nombre de la COLECCTION en la base de datos en Mongo.
+schema.plugin(mongoosePaginate);                                                                                    
+export const UserModel = model("users", schema);          

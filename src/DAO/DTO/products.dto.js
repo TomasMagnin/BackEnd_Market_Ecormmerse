@@ -7,5 +7,6 @@ export class ProductDTO {
         this.code = product.code;
         this.stock = product.stock;
         this.category = product.category;
+        this.owner = product.owner;
     };
 };

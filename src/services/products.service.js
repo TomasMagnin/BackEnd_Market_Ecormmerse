@@ -1,5 +1,6 @@
 import { ProductModel  } from "../DAO/mongo/models/products.model.js";
 import { ProductMongo  } from "../DAO/mongo/products.mongo.js";
+const productMongo = new ProductMongo();
 import { ProductDTO  } from "../DAO/DTO/products.dto.js";
 import { CustomError } from "../services/errors/custom-error.js";
 import EErros from "../services/errors/enums.js";
@@ -27,7 +28,6 @@ export class ProductService  {
         if (query) {
             filter.$or = [
                 {category: query},
-                {availability: query}, /* ? */
             ];
         }
 
@@ -54,15 +54,15 @@ export class ProductService  {
         return response;
     }
 
-    async createProduct(title, description, price, thumbnail, code, stock, category){
+    async createProduct({title, description, price, thumbnail, code, stock, category, owner}){
         this.validate(title, description, price, thumbnail, code, stock, category);
-        const productToCreate = new ProductDTO(title, description, price, thumbnail, code, stock, category);
-        const productCreated = await this.dao.createProduct(productToCreate);
+        const productToCreate = new ProductDTO({title, description, price, thumbnail, code, stock, category, owner});
+        const productCreated = await productMongo.createProduct(productToCreate);
         return productCreated;
     }
 
     async deleteProduct(_id){
-        const deleted = await ProductMongo.deleteProduct({_id});
+        const deleted = await productMongo.deleteProduct({_id});
         if (deleted.deletedCount === 1) {
             return true;
         } else {
@@ -77,12 +77,12 @@ export class ProductService  {
 
     async updateProduct(id, title, description, price, thumbnail, code, stock, category){
             this.validate(title, description, price, thumbnail, code, stock, category);
-            const productUptaded = await ProductMongo.updateProduct({ _id: id }, {title, description, price, thumbnail, code, stock, category});
+            const productUptaded = await productMongo.updateProduct({ _id: id }, {title, description, price, thumbnail, code, stock, category});
             return productUptaded;
     }
 
     async getProductByIdAndOwner(productId, ownerEmail) {
-        const product = await ProductMongo.findProduct({
+        const product = await productMongo.findProduct({
             _id: productId,
             owner: ownerEmail,
         });

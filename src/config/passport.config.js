@@ -17,7 +17,7 @@ const clientSecret = process.env.CLIENT_SECRET
 export function iniPassport() {
   passport.use(
     'login',
-    new LocalStrategy({ usernameField: 'email' }, async (username, password, done, req) => {
+    new LocalStrategy({ usernameField: 'email' }, async (username, password, done) => {
       try {
         const user = await UserModel.findOne({ email: username });
         if (!user) {
@@ -34,6 +34,8 @@ export function iniPassport() {
       }
     })
   );
+
+
 
   passport.use(
     'register',
@@ -64,18 +66,14 @@ export function iniPassport() {
                     role: "user",
                 };
 
-                if(username === 'adminCoder@coder.com' && password === 'adminCod3r123'){
-                    newUser.role= "admin"
-                 };
-
                 let userCreated = await UserModel.create(newUser);
-                logger.info('User Registration succesful');
-                return done(null, userCreated);
-            } catch (err) {
-              logger.error('Error in register', { err });
-              return done(err);
-            }
-        }
+                    logger.info('User Registration successful', { user: userCreated });
+                    return done(null, userCreated);
+                } catch (e) {
+                    logger.error('Error in register', e);
+                    return done(e);
+                }
+          }
     )
 );
 

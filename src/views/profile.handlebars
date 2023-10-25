@@ -1,12 +1,45 @@
-<h1>Profile</h1>
+<nav>
+    <ul>
+        <li>
+            <a href="/">Home</a>
+        </li>
+        <li>
+            <a href="/auth/profile">Profile</a>
+        </li>
+        <li>
+            <a href="/auth/roleManager">User Administration</a>
+        </li>
+    </ul>
+</nav>
+<section>
+    <h1>Profile</h1>
 
-email:
-{{user.email}}
-<br/>
-isAdmin:
-{{user.isAdmin}}
-<br/>
-<a href='/auth/administration'>See data<a>
+    <form id="addDocuments">
+        <h2>Carga de documentos</h2>
+    <label for="identification">Identification:</label>
+    <input type="file" id="identification" name="identification">
+    <label for="address">Address Document:</label>
+    <input type="file" id="address" name="address">
+    <label for="stateaccount">State Account:</label>
+    <input type="file" id="stateaccount" name="stateaccount">
+    <button type="submit">Upload files</button>
+    </form>
+</section>
 
-<br/>
 <a href='/auth/logout'>Logout</a>
+
+<script>
+    const documentsForm = document.getElementById('addDocuments');
+    documentsForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(documentsForm)
+        const response = await fetch('/api/users/{{user._id}}/documents', {
+            method: 'POST',
+            body: formData,
+        })
+        if(response.ok) {
+            alert('documents uploaded successfully');
+        }
+        console.error(await response.json)
+    });
+</script>

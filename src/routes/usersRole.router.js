@@ -10,4 +10,5 @@ export const usersRoleRouter = express.Router();
  
 
 usersRoleRouter.put('/premium/:uid', usersController.toggleUserRole);
-usersRoleRouter.post('/:uid/documents', upload.array('files'), authController.uploadDocuments);
+usersRoleRouter.delete('/:uid', usersController.deleteUser);
+usersRoleRouter.post('/:uid/documents', upload.fields([{name: 'identification', maxCount: 1}, {name: 'address', maxCount: 1}, {name: 'stateaccount', maxCount: 1}]), authController.uploadDocuments);

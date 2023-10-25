@@ -1,9 +1,5 @@
-// Codigo de Front, para poder trabajar en el Frontend
-// En socket siempre se transmiten JSON.
-/* socket.on es para cuando llega un Mensaje y socket.emit es para enviar un msj. */
-
 const socket = io();
-let correoDelUsuario = "";        // Creamos la variable global para agregar los nombres en el front.
+let userEmail = '';
 import logger from "../utils/logger.js";
 
 async function askEmail() {
@@ -48,4 +44,3 @@ socket.on('msg_back_to_front', (messages) => {
   const divMsgs = document.getElementById('div-msgs');
   divMsgs.innerHTML = msgsFormateados;
 });
-

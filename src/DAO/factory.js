@@ -1,10 +1,6 @@
 import { config } from "../config/config.js";
 import { mongoose } from "mongoose";
 import logger from "../utils/logger.js";
-import ProductsMongo from "./mongo/products.mongo.js"
-import CartsMongo from "./mongo/carts.mongo.js"
-import ProductsMemory from "./memory/ProductManager.js"
-import CartsMemory from "./memory/CartManager.js"
 
 let Products;
 let Carts;
@@ -14,12 +10,16 @@ switch (config.persistence) {
         logger.info('Mongo connected');
 
         mongoose.connect(process.env.MONGODB_URL);
+        const ProductsMongo = require('./mongo/products.mongo.js').default;
+        const CartsMongo = require('./mongo/carts.mongo.js').default;
         Products = ProductsMongo;
         Carts = CartsMongo;
 
     break;
     case 'FILESYSTEM':
         logger.info('Persistence with Memory');
+        const ProductsMemory = require('./memory/ProductManager.js').default;
+        const CartsMemory = require('./memory/CartManager.js').default;
         Products = ProductsMemory;
         Carts = CartsMemory
 

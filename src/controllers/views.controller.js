@@ -1,13 +1,13 @@
 import { ViewsService } from '../services/views.service.js';
 import { CustomError } from "../services/errors/custom-error.js";
 import EErros from "../services/errors/enums.js";
-import logger from "../utils/logger.js";
+import  logger  from "../utils/logger.js";
 import { ProductService } from "../services/products.service.js";
-const productService = new ProductService();
 const viewsService = new ViewsService();
 
 export class ViewsController {
     async getHome(req, res) {
+            const productService = new ProductService();
             const { limit = 10, page = 1, sort, query } = req.query;
             const queryParams = { limit, page, sort, query };
             const products = await productService.getAllProducts(queryParams);
@@ -56,7 +56,7 @@ export class ViewsController {
             const product = await viewsService.getProduct(pid);
             res.render('product', { product });
         } catch (error) {
-        next(error);
+            next(error);
         }
     }
 

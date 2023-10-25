@@ -1,6 +1,6 @@
 import express from "express";
 import { isLoggedIn  } from "../middlewares/auth.js";
-import { ViewsController } from '../controllers/views.controller.js';
+import { ViewsController } from "../controllers/views.controller.js";
 const viewsController = new ViewsController();
 
 

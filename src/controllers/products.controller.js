@@ -4,6 +4,7 @@ import { CustomError } from "../services/errors/custom-error.js";
 import EErros from "../services/errors/enums.js";
 import { generateProduct } from "../utils/utils.js";
 import nodemailer from "nodemailer";
+import { UserDTO } from "../DAO/DTO/user.dto.js";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -101,7 +102,8 @@ export class ProductsController {
     
     async deleteProduct(req, res) {
             const { id } = req.params;
-            const userEmail = req.user.email;
+            const user = new UserDTO(req.session)
+            const userEmail = user.email;
 
             if (req.user.role === 'admin') {
                 const productDeleted = await productService.deleteProduct(id);
@@ -137,8 +139,8 @@ export class ProductsController {
                 code: EErros.INTERNAL_SERVER_ERROR,
             });
         }
-        if (req.user.role === 'premium') {
-            this.sendProductDeletionEmail(req.user.email, product.name);
+        if (user.role === 'premium') {
+            this.sendProductDeletionEmail(user.email, product.name);
         }
         return res.status(200).json({
             status: 'success',

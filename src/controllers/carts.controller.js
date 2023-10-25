@@ -35,7 +35,7 @@ export class CartsController {
 
     async addProductToCart(req, res) {
             const { cid, pid } = req.params;
-            const cart = await cartService.addProductToCart(cid, pid);
+            const cart = await cartService.addProductToCart(cid, pid, req.user);
             if (cart instanceof Error) {
                 CustomError.createError({
                     name: '404 not found error',
@@ -101,6 +101,7 @@ export class CartsController {
     }
 
     async clearCart(req, res) {
+        const { cid } = req.params;
         try {
             await cartService.clearCart(cid);
             res.status(200).json({ status: 'success', message: 'Cart cleared successfully' });
@@ -115,7 +116,6 @@ export class CartsController {
     }
 
     async purchaseCart(req, res) {
-        
             const { cid } = req.params;
             const cart = await cartService.getCart(cid);
 

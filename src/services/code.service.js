@@ -23,16 +23,17 @@ export class CodeService {
     };
 
     async findCode(email, code) {
-        const foundCode = await CodesModel.findOne({email, code});
-        if(foundCode && foundCode.expire > Date.now()){
+        const foundCode = await CodesModel.findOne({ email, code });
+        if(foundCode && foundCode.expire > Date.now()) {
             return true;
         } else {
             return false;
         };
     };
 
-    async updateUser(password) {
-        const updateUser = await UserModel.updateOne({email}, {password});
+    async updateUser(email, password) {
+        const updateUser = await UserModel.findOneAndUpdate({email}, {password});
+        return updateUser;
     }
 };
 

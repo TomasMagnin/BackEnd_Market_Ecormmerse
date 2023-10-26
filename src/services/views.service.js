@@ -9,18 +9,18 @@ const cartService = new CartService();
 
 export class ViewsService {
     async getHome(queryParams) {
-            const products = await productService.getAllProducts(queryParams);
-            if (products instanceof Error) {
-                CustomError.createError({
-                    name: 'Controller message error',
-                    cause: products,
-                    message: 'something went wrong :(',
-                    code: EErros.INTERNAL_SERVER_ERROR,
-                });
-            }
-            return products;
+        const products = await productService.getAllProducts(queryParams);
+        if (products instanceof Error) {
+            CustomError.createError({
+                name: 'Controller message error',
+                cause: products,
+                message: 'something went wrong :(',
+                code: EErros.INTERNAL_SERVER_ERROR,
+            });
+        }
+        return products;
     }
-
+    
     async getRealTimeProducts() {
             const products = await productService.getAllProducts();
             if (products instanceof Error) {
@@ -33,7 +33,7 @@ export class ViewsService {
             }
             return products;
     }
-
+    
     async getProducts(queryParams) {
             const {
                 payload: products,
@@ -76,7 +76,7 @@ export class ViewsService {
                 nextLink: nextLink?.substring(4) || '',
             };
     }
-
+    
     async getProduct(pid) {
         try {
             const product = await ProductMongo.getProduct(pid);
@@ -95,7 +95,7 @@ export class ViewsService {
             throw error;
         }
     }
-
+    
     async getCart(cid) {
         try {
             const cart = await cartService.getCart(cid);

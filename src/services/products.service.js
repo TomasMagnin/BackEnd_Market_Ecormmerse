@@ -55,6 +55,7 @@ export class ProductService  {
     }
 
     async createProduct({title, description, price, thumbnail, code, stock, category, owner}){
+
         this.validate(title, description, price, thumbnail, code, stock, category);
         const productToCreate = new ProductDTO({title, description, price, thumbnail, code, stock, category, owner});
         const productCreated = await productMongo.createProduct(productToCreate);

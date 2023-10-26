@@ -12,11 +12,11 @@
        await connect(mongodbUrl);
        //"mongodb+srv://tomasmagnin:wRHD9t0bpXzg74iX@backendcoder.tsh7jee.mongodb.net/ecommerce?retryWrites=true&w=majority"
        
-       logger.info("plug to mongo!");          // Si sale bien imprimimos.
+       logger.info("plug to mongo!");          
     
     } catch (error) {
       logger.error(error);
-      throw "can not connect to the db";      // Si sale mal imprimimos este otro
+      throw "can not connect to the db";      
     }
  }
  
@@ -27,16 +27,11 @@
  import { ProductService } from "../services/products.service.js";   
 
 
- export function connectSocket(httpServer) {         // El servidor Socket toma como argumento a un servidor HTTP existente, al cual se conecta
-    const socketServer = new Server(httpServer);        // Creamos un nuevo objeto servidor de Socket y lo guardamos en una variable. El objeto es una representacion del servidor socket. 
- 
- // Creamos en nuevo servidor de Socket y lo guardamos en una variable. Le pasamos al servidor de socket el servidor de HTTP.
- // Toda la configuracion de a partir de esta linea es la del Backend.
-   
- /* socketServer.on es para cuando llega un Mensaje
- socketServer.emit es para enviar un msj. */
+ export function connectSocket(httpServer) {          
+    const socketServer = new Server(httpServer);        
  
  
+
  socketServer.on("connection", (socket)=> {  // Cada vez que se crea y conecta un socket en el front para comunicar al back se creak un socket.
      // Back Recibe 
      logger.debug('New user connected');
@@ -51,11 +46,11 @@
         socketServer.emit("deletedProduct", id);
       });
   
-      socket.on("msg_front_to_back", async (msg) => {               // Recivimos lo que emitio front, el nombre tiene que ser igual que el del emit del front para escucharlo en este caso "msj_front_to_back".
-        const msgCreated = await ChatModel.create(msg);             // En caso de que los datos ingresados estuvieran correctos, usamos ChatModdel  
+      socket.on("msg_front_to_back", async (msg) => {               
+        const msgCreated = await ChatModel.create(msg);             
         const messages = await ChatModel.find({});
-         // Cuando respondemos con socketServer les respondemos a todos los socket, a diferencia de usar socket solametne,
-        socketServer.emit("msg_back_to_front", messages);           //Le enviamos el array con mensajes a todos  
+         
+        socketServer.emit("msg_back_to_front", messages);           
       });
     });
   }

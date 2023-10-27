@@ -67,7 +67,7 @@ app.use(passport.session());
 
 //  Configuracion de Handlebars 
 app.engine("handlebars", handlebars.engine());                                 // Inicializamos el motor de plantilla. El engine de la app es el de handlebars.
-app.set("views", path.join(__dirname.replace(/\\[^\\]*$/, '\\'), "views"));    // Indicamos en que parte del proyecto se encuentran las vistas, usando la variable __dirname para usar rutas absolutas, seleccionado la carpeta(views) o archivo y no pifiarle a la direccion. El ultimo archivo es en que carpeta se encuentran las vistas.
+app.set('views', "src/views");  // Indicamos en que parte del proyecto se encuentran las vistas, usando la variable __dirname para usar rutas absolutas, seleccionado la carpeta(views) o archivo y no pifiarle a la direccion. El ultimo archivo es en que carpeta se encuentran las vistas.
 app.set("view engine", "handlebars");                                          // Indicamos que el motor que ya inicializamos es el que vamos a utilziar por defecto.
 
 const swaggerOptions = {

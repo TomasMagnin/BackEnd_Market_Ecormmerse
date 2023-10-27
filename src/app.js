@@ -39,7 +39,7 @@ const socketServer = new Server(httpServer);                        // Guardamos
 app.use(errorHandler);
 app.use(express.json());                                        // Declaramos que el servidor utiliza formato JSON por defecto.
 app.use(express.urlencoded({extended: true}));                  // Declaramos que extendemos lo que recive por URL, para recivir datos complejos y porder mapearlos desde la URL.
-app.use(express.static("./public"));                              // Usamos una carpeta public, para guardar archivos estaticos, donde puede acceder el usuario. El nombre del directorio no forma parte de la URL.
+app.use(express.static("src/public"));                              // Usamos una carpeta public, para guardar archivos estaticos, donde puede acceder el usuario. El nombre del directorio no forma parte de la URL.
 
 app.use(compression({
     brotli: { enabled: true, zlib: {} },
